@@ -65,6 +65,9 @@ void hListBox::clear(void)
 {
     hGui * gui = hGui::getInstance();
 
+    parentPanel->maxX -= w;
+    parentPanel->maxY -= h;
+
     int wsize = widgets.size();
     for(int i = 0; i < wsize; ++i) {
 		gui->removeWidget(widgets[i]);
@@ -76,6 +79,7 @@ void hListBox::clear(void)
     for(int i = 0; i < dsize; ++i)
 		delete data_buffer[i];
     data_buffer.clear();
+
 }
 
 void hListBox::addItems(int numItems, string label)
@@ -439,17 +443,17 @@ void hListBox::addScrollBar(void)
 	if(scrollBar == NULL) {
         hGui * gui = hGui::getInstance();
         // Add the scrollBar widget:
-	    scrollBar = new hScrollBar("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, (y+gui->scrollButtonHeight)-1,
+	    scrollBar = new hScrollBar("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, (y+gui->scrollButtonHeight)-1,
 								   gui->scrollBarSize, (h - (gui->scrollButtonHeight*2)+1) );
 	    scrollBar->setLinkedListBox(this);
 
         // Add the dec button widget (up):
-        decButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, y, 0, "");
+        decButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, y, 0, "");
         decButton->setDirection(false);
 	    decButton->setLinkedListBox(this);
 
         // Add the inc button widget (down):
-        incButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, ((y + h) - gui->scrollButtonHeight)-1, 0, "");
+        incButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, ((y + h) - gui->scrollButtonHeight)-1, 0, "");
         incButton->setHeight(gui->scrollButtonHeight+1);
         incButton->setDirection(true);
 	    incButton->setLinkedListBox(this);

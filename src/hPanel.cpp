@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #include "hPanel.h"
@@ -47,7 +47,7 @@ hPanel::hPanel(std::string name, hPanel * parent, int dispMode, int xx, int yy, 
 	selectedRadio = NULL;
 //	selectedTextObj = NULL; // statically initialized
 
-	maxX = x; 
+	maxX = x;
 	maxY = y;
 }
 
@@ -71,7 +71,7 @@ int hPanel::getNumData(void)
 hWidget * hPanel::getLastWidget(void)
 {
 	int size = widgets.size();
-	
+
 	if(size > 0)
 		 return widgets[size-1];
 	else return NULL;
@@ -96,26 +96,35 @@ void hPanel::adaptPanelSize(int xx, int yy)
 {
 	int panelRight  = x + w;
 	int panelBottom = y + h;
-	
+
 	int widgetRight, widgetBottom;
-	
+
 	int size = widgets.size();
 	for(int i = 0; i < size; ++i) {
 		hWidget *widget = widgets[i];
 		widgetRight  = widget->x + widget->w;
 		widgetBottom = widget->y + widget->h;
-		
+
 		if(panelRight  < widgetRight)  w = (widgetRight  - x) + xx;
 		if(panelBottom < widgetBottom) h = (widgetBottom - y) + yy;
 	}
 }
 
-//--------------------------------------------------------------
+void hPanel::update(void)
+{
+    int size = widgets.size();
+    for(int i = 0; i < size; ++i)
+    {
+        widgets[i]->update();
+    }
 
+}
+
+//--------------------------------------------------------------
 void hPanel::draw(void)
 {
 	if(visibleBorder || visibleBackground) hWidget::draw();
-	
+
     int size = widgets.size();
     for(int i = 0; i < size; ++i)
         widgets[i]->draw();
@@ -230,11 +239,11 @@ void hPanel::addWidgetPtr(hWidget *widget)
 hWidget * hPanel::findWidget(int xx, int yy)
 {
 	hWidget *foundWidget = NULL;
-	
+
     int size = widgets.size();
     for(int i = size - 1; i >= 0; i--) {
         hWidget *widget = widgets[i];
-		
+
         if(xx >= widget->x)
             if(yy >= widget->y)
                 if(xx <= (widget->x + widget->w + widget->x_extension))
@@ -243,7 +252,7 @@ hWidget * hPanel::findWidget(int xx, int yy)
                         break;
                     }
 	}
-	
+
 	return foundWidget;
 }
 
@@ -251,19 +260,18 @@ int hPanel::findWidgetIndex(hWidget * widget)
 {
     unsigned int  result = -1;
     int size = widgets.size();
-	
+
     for(int i = size - 1; i >= 0; i--) {
         if(widget == widgets[i]) {
             result = i;
             break;
         }
     }
-	
+
     return result;
 }
 
 //--------------------------------------------------------------
-
 hWidget * hPanel::getWidgetAt(int index)
 {
     return widgets[index];

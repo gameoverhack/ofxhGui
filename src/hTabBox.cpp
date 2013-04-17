@@ -1,20 +1,20 @@
 
 /*****************************************************************************
-
+ 
  Copyright (C) 2011 by Bernard Geyer
-
+ 
  http://bernardgeyer.com/
-
+ 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
-
+ 
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
-
+ 
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-
+ 
  *****************************************************************************/
 
 #include "hTabBox.h"
@@ -60,7 +60,7 @@ void hTabBox::addItems(int numItems)
 	string name = data->name;
 	string itemName;
 	int offset, index;
-
+	
     int xx = 0, yy = 0;
     hTabBoxItem *item = NULL;
 
@@ -72,10 +72,7 @@ void hTabBox::addItems(int numItems)
 			itemName = name + ofToString(index);
 			// cout << itemName << endl;
 
-            if(i == 0)
-                 item = new hTabBoxItem(itemName, this, HGUI_ABSOLUTE_POSITION, x+xx,   y+yy, itemWidth,   "");
-			else item = new hTabBoxItem(itemName, this, HGUI_ABSOLUTE_POSITION, x+xx-1, y+yy, itemWidth+1, "");
-
+			item = new hTabBoxItem(itemName, this, HGUI_ABSOLUTE_POSITION, x+xx, y+yy, itemWidth, "");
 			item->getData()->index  = index;
 			item->getData()->offset = offset;
  			item->setSelectColor(defSelectColor);

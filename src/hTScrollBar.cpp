@@ -40,6 +40,7 @@ hTScrollBar::hTScrollBar(std::string name, hPanel * parent, int dispMode, int xx
 	startItem = 0;
 
     linkedTextArea = NULL;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -47,6 +48,7 @@ hTScrollBar::hTScrollBar(std::string name, hPanel * parent, int dispMode, int xx
 void hTScrollBar::setLinkedTextArea(hTextArea * textarea)
 {
     linkedTextArea = textarea;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -73,6 +75,7 @@ void hTScrollBar::setPosition(int start_item)
         position = (startItem * maxWidth) / (numData - numItems);
     }
     // cout << "position  = " << position << endl;
+    bPixelsDirty = true;
 }
 
 // --------------------------------------------------------------
@@ -80,6 +83,53 @@ void hTScrollBar::setPosition(int start_item)
 void hTScrollBar::draw(void)
 // WARNING: draw it only if usable
 {
+//    if(linkedTextArea == NULL) return;
+//
+//    if (bPixelsDirty) {
+//
+//        hFbo.begin();
+//        glClearColor(0.0, 0.0, 0.0, 0.0);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//
+//        int numItems = linkedTextArea->maxLines;
+//        int numData  = linkedTextArea->lines.size();
+//
+//        if((numData - numItems) > 0) {
+//            hGui * gui = hGui::getInstance();
+//
+//            int hh  = gui->scrollHandleHeight;
+//            int yy  = (0 + position) - (hh/2);
+//            /*
+//             #if defined( __WIN32__ ) || defined( _WIN32 )
+//             hh-=1;
+//             #endif
+//             */
+//            hSetHexColor(gui->fillColor);
+//            hPaintRect(0+1, 0, w-2, h);
+//
+//            hSetHexColor(gui->scrollHandleColor);
+//            hPaintRect(0+1, yy, w-2, hh);
+//
+//            hSetHexColor(gui->borderColor);
+//            hFrameRect(0, 0, w, h);
+//            hFrameRect(0+2, yy, w-4, hh);
+//
+//            // Enable the drawing of the other small widgets
+//            linkedTextArea->incButton->setEnabled(true);
+//            linkedTextArea->decButton->setEnabled(true);
+//        }// (numData - numItems) > 0)
+//        else {
+//            // Disable the drawing of the other small widgets
+//            linkedTextArea->incButton->setEnabled(false);
+//            linkedTextArea->decButton->setEnabled(false);
+//        }
+//
+//        hFbo.end();
+//        bPixelsDirty = false;
+//    }
+//
+//    ofSetColor(255, 255, 255, 255);
+//    hFbo.draw(x, y, w, h);
     if(linkedTextArea == NULL) return;
 
     int numItems = linkedTextArea->maxLines;
@@ -121,6 +171,8 @@ void hTScrollBar::draw(void)
 void hTScrollBar::mousePressed(int xx, int yy, int btn)
 {
 	mouseDragged(xx, yy, btn); // same routine...
+    bPixelsDirty = true;
+    if(linkedTextArea != NULL) linkedTextArea->bPixelsDirty = true;
 }
 
 void hTScrollBar::mouseDragged(int xx, int yy, int btn)
@@ -153,6 +205,8 @@ void hTScrollBar::mouseDragged(int xx, int yy, int btn)
             linkedTextArea->startLine = startItem;
        }
    }
+    bPixelsDirty = true;
+    if(linkedTextArea != NULL) linkedTextArea->bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------

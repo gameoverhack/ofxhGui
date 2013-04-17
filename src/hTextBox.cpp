@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #include "hTextBox.h"
@@ -49,6 +49,7 @@ hTextBox::hTextBox(std::string name, hPanel * parent, int dispMode, int xx, int 
 	data->selectable = true;
     editable = true;
     linkedLabel = NULL;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -56,6 +57,7 @@ hTextBox::hTextBox(std::string name, hPanel * parent, int dispMode, int xx, int 
 void hTextBox::clearLabel()
 {
     data->label.clear();
+    bPixelsDirty = true;
 }
 
 void hTextBox::setLabel(string s)
@@ -82,26 +84,31 @@ void hTextBox::setLabel(string s)
         textWidth = width;
         data->label = s;
    }
+    bPixelsDirty = true;
 }
 
 string hTextBox::getLabel(void)
 {
     return data->label;
+    bPixelsDirty = true;
 }
 
 void hTextBox::setLinkedLabel(hLabel * labelWidget)
 {
 	linkedLabel  = labelWidget;
+    bPixelsDirty = true;
 }
 
 void hTextBox::clearAfterReturn(bool flag)
 {
     clearFlag = flag;
+    bPixelsDirty = true;
 }
 
 void hTextBox::sendOnLoosingFocus(bool flag)
 {
     focusSendFlag = flag;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -109,6 +116,7 @@ void hTextBox::sendOnLoosingFocus(bool flag)
 void hTextBox::setMessage(string s)
 {
 	data->message = s;
+    bPixelsDirty = true;
 }
 
 void hTextBox::bang(void)
@@ -117,24 +125,57 @@ void hTextBox::bang(void)
         hEvents::getInstance()->sendEvent(data->message, data->label);
 }
 
-//--------------------------------------------------------------
+void hTextBox::update()
+{
+//    if (bPixelsDirty) {
+//        hGui * gui = hGui::getInstance();
+//
+//        hSetHexColor(gui->editBackColor);
+//        hPaintRect(0, 0, w, h);
+//
+//        //hWidget::draw();
+//
+//        if(data->label.size() > 0) { // draw text
+//            hSetHexColor(gui->editTextColor);
+//            hDrawString(gui->font, data->label, 0+3, 0+gui->textHeight);
+//        }
+//
+//        hSetHexColor(gui->caretColor);
+//
+//        if(data->selected) { // draw caret
+//            if(data->label.size() > 0) {
+//#if OF_VERSION < 7
+//                hLine(0+textWidth+0, 0+2, 0+textWidth+0, 0+gui->textHeight+2);
+//#else
+//                hLine(0+textWidth+5, 0+2, 0+textWidth+5, 0+gui->textHeight+2);
+//#endif
+//            }
+//            else hLine(0+2,           0+2, 0+2          , 0+gui->textHeight+2);
+//        }
+//        hFbo.end();
+//        bPixelsDirty = false;
+//    }
+//    ofSetColor(255, 255, 255, 255);
+//    hFbo.draw(x, y, w, h);
+}
 
+//--------------------------------------------------------------
 void hTextBox::draw()
 {
     hGui * gui = hGui::getInstance();
-	
+
     hSetHexColor(gui->editBackColor);
     hPaintRect(x, y, w, h);
-	
+
     hWidget::draw();
-	
+
     if(data->label.size() > 0) { // draw text
         hSetHexColor(gui->editTextColor);
         hDrawString(gui->font, data->label, x+3, y+gui->textHeight);
     }
-	
+
     hSetHexColor(gui->caretColor);
-	
+
     if(data->selected) { // draw caret
         if(data->label.size() > 0) {
 #if OF_VERSION < 7
@@ -168,6 +209,7 @@ void hTextBox::keyPressed(int key)
         setLabel(s);
     }
     // cout << key << endl;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -175,6 +217,7 @@ void hTextBox::keyPressed(int key)
 void hTextBox::mousePressed(int xx, int yy, int btn)
 {
     setSelected(true);
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------

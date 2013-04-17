@@ -93,6 +93,7 @@ void hGui::setRootWidget(hWidget * root)
 	rootWidget = root;
 }
 
+
 hWidget * hGui::getRootWidget(void)
 {
 	return rootWidget;
@@ -446,15 +447,19 @@ void hGui::setDefaultColors(void)
 //							ANSWER TO LISTENERS
 // ---------------------------------------------------------------
 
+void hGui::update(void)
+{
+    if(visible == false) return;
+    if(rootWidget != NULL)
+        rootWidget->update();
+}
+
 void hGui::draw(void)
 {
 	if(visible == false) return;
 
-    if(rootWidget != NULL) {
-		ofPushStyle();
-			rootWidget->draw();
-		ofPopStyle();
-	}
+    if(rootWidget != NULL)
+        rootWidget->draw();
 }
 
 void hGui::draw(ofEventArgs & args)
@@ -538,6 +543,17 @@ void hGui::mouseDragged(ofMouseEventArgs & args){
 // ---------------------------------------------------------------
 //									HELPER FUNCTIONS
 // ---------------------------------------------------------------
+
+hWidget * hGui::getWidget(std::string name) {
+    hWidget * widget = NULL;
+    int size = widgets.size();
+	for(int i=0; i < size; ++i) {
+		if(widgets[i]->getData()->name == name) {
+			widget = widgets[i];
+		}
+	}
+    return widget;
+}
 
 void hGui::addWidget(hWidget * widget)
 // add a widget to the list of all widgets

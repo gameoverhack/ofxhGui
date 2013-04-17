@@ -43,15 +43,15 @@ void hPaintRect(int x, int y, int w, int h);
 
 //--------------------------------------------------------
 
-void hLine(float x1, float y1, float x2, float y2);
+inline void hLine(float x1, float y1, float x2, float y2);
 // Actually identical to 'ofLine', but we let us the possibility the change
 // it in the future
 
-void hSetHexColor(int hexColor);
+inline void hSetHexColor(int hexColor);
 // Necessary to use ofSetHexColor on OF 6
 
 class ofTrueTypeFont;
-void hDrawString(ofTrueTypeFont *fnt, std::string s, float x, float y);
+inline void hDrawString(ofTrueTypeFont *fnt, std::string s, float x, float y);
 // Necessary to draw correctly the strings on OF 6 AND OF 7
 
 //--------------------------------------------------------

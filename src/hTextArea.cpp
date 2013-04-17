@@ -84,6 +84,8 @@ hTextArea::hTextArea(std::string name, hPanel * parent, int dispMode, int xx, in
 
 	// Set the new values of maxX and maxY
 	addMaxXY((w+gui->scrollBarSize), (h));
+
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -95,32 +97,32 @@ void hTextArea::addTools(int width, int position, std::string sendStr, std::stri
     int centerX = x + (w/2);
 
     if(position < 0)
-		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x, y+h-1, width+1, hTextAreaSendButtonType, sendStr);
+		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x, y+h-1, width, hTextAreaSendButtonType, sendStr);
     else if(position == 0)
-		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, centerX-width, y+h-1, width+1, hTextAreaSendButtonType, sendStr);
+		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, centerX-width, y+h-1, width, hTextAreaSendButtonType, sendStr);
     else if(position > 0)
-		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, (x+w)-(width*2), y+h-1, width+1, hTextAreaSendButtonType, sendStr);
+		sendButton = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, (x+w)-(width*2), y+h-1, width, hTextAreaSendButtonType, sendStr);
 
 	sendButton->setLinkedTextArea(this);
 
     if(position < 0)
-        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+width-1, y+h-1, width+1, hTextAreaClearButtonType, clearStr);
+        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+width, y+h-1, width, hTextAreaClearButtonType, clearStr);
     else if(position == 0)
-        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, centerX-1, y+h-1, width+1, hTextAreaClearButtonType, clearStr);
+        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, centerX, y+h-1, width, hTextAreaClearButtonType, clearStr);
     else if(position > 0)
-        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, (x+w)-width-1, y+h-1, width+1, hTextAreaClearButtonType, clearStr);
+        clearButton  = new hTextAreaButton("", parentPanel, HGUI_ABSOLUTE_POSITION, (x+w)-width, y+h-1, width, hTextAreaClearButtonType, clearStr);
 
     clearButton->setLinkedTextArea(this);
 
-/* NO MORE NECESSARY!
 #if defined( __WIN32__ ) || defined( _WIN32 )
     sendButton->move(0, 1);  sendButton->incHeight(-1);
     clearButton->move(0, 1); clearButton->incHeight(-1);
 #endif
-*/
+
 	hWidget * lastWidget = parentPanel->getLastWidget();
 	if(lastWidget != NULL)
 		addMaxXY(gui->scrollBarSize-lastWidget->getWidth(), gui->buttonHeight-7);
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -128,6 +130,7 @@ void hTextArea::addTools(int width, int position, std::string sendStr, std::stri
 void hTextArea::setText(string s)
 {
 	setText(s, false);
+    bPixelsDirty = true;
 }
 
 void hTextArea::setText(string s, bool endFlag)
@@ -138,6 +141,7 @@ void hTextArea::setText(string s, bool endFlag)
 
     if(endFlag == true)
 		jumpToEnd();
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -145,6 +149,7 @@ void hTextArea::setText(string s, bool endFlag)
 void hTextArea::addText(string s)
 {
 	addText(s, false);
+    bPixelsDirty = true;
 }
 
 void hTextArea::addText(std::string s, bool endFlag)
@@ -155,6 +160,7 @@ void hTextArea::addText(std::string s, bool endFlag)
 
     if(endFlag == true)
 		jumpToEnd();
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -162,6 +168,7 @@ void hTextArea::addText(std::string s, bool endFlag)
 void hTextArea::clearText(void)
 {
 	clearText(false);
+    bPixelsDirty = true;
 }
 
 void hTextArea::clearText(bool endFlag)
@@ -170,6 +177,7 @@ void hTextArea::clearText(bool endFlag)
 
     updateLines();
     updateSelection(false);
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -182,6 +190,7 @@ string hTextArea::getText(void)
 void hTextArea::setEditable(bool flag)
 {
     editable = flag;
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -189,11 +198,13 @@ void hTextArea::setEditable(bool flag)
 void hTextArea::setMessage(string s)
 {
 	data->message = s;
+    bPixelsDirty = true;
 }
 
 void hTextArea::setMessage2(std::string s)
 {
     data->message2 = s;
+    bPixelsDirty = true;
 }
 
 void hTextArea::bang(void)
@@ -203,8 +214,101 @@ void hTextArea::bang(void)
         cout << "data->label: " << data->label << endl;
 }
 
-//--------------------------------------------------------------
+void hTextArea::update()
+{
+//    if (bPixelsDirty) {
+//
+//        hFbo.begin();
+//        glClearColor(0.0, 0.0, 0.0, 0.0);
+//        glClear(GL_COLOR_BUFFER_BIT);
+//
+//        hGui * gui = hGui::getInstance();
+//
+//        if(editable){
+//            hSetHexColor(gui->editBackColor);
+//            hPaintRect(0, 0, w, h);
+//        }
+//
+//        //hWidget::draw();
+//
+//        if(visibleBackground){
+//            if(backgroundColor != -1)
+//                hSetHexColor(backgroundColor);
+//            else hSetHexColor(gui->backgroundColor);
+//            hPaintRect(1, 0, w-1, h);
+//        }
+//
+//        if(visibleBorder){
+//            hSetHexColor(gui->borderColor);
+//            hFrameRect(1, 0, w-1, h);
+//        }
+//
+//        int xPos, yPos; string s;
+//        int lineIndex, charIndex;
+//        int start_line;
+//
+//        // if(data->label.size() > 0) { // draw text
+//        if(lines.size() > 0) { // draw text
+//            // when data->label.size() > 0, lines.size() is also > 0
+//            if(editable)
+//                hSetHexColor(gui->editTextColor2);
+//            else hSetHexColor(gui->textColor);
+//
+//            start_line = startLine;
+//            if(start_line > (lines.size() - 1))
+//                start_line = lines.size() - 1;
+//
+//            lineIndex = 0;
+//            int size = lines.size();
+//            for(int j = start_line; j < size; ++j) {
+//                charIndex = 0;
+//                if(lines[j].used == true) {
+//                    int jEnd = lines[j].end;
+//                    for(int i = lines[j].start; i <= jEnd; ++i) {
+//                        s = data->label[i];
+//                        yPos = 0+(gui->ftextHeight * (lineIndex+1));
+//                        xPos = 0+(charWidth*charIndex);
+//                        if((unsigned int)s[0] > 31) { // control characters (specially CR) are drawed as ||
+//                            hDrawString(gui->ffont, s, xPos+3, yPos);
+//                        }
+//                        /*  // we need no more to display the <return> character
+//                         // BUT KEEP IT SO (maybe it could be put in preferences later)
+//                         else {
+//                         hDrawString(gui->ffont, "|", xPos+3, yPos);
+//                         hDrawString(gui->ffont, "|", xPos+4, yPos);
+//                         }
+//                         */
+//                        ++charIndex;
+//                    }
+//                }
+//                ++lineIndex;
+//                if(lineIndex >= maxLines) break;
+//            }
+//        }
+//
+//        if(data->selected) { // draw caret
+//            if(lines.size() > 0) {
+//                //hSetHexColor(gui->caretColor);
+//                yPos = 0+(gui->ftextHeight * ((lineSelection-start_line) + 1));
+//                if(yPos < ((y+h)-2)) { // don't draw the caret outside
+//                    xPos = 0+(charWidth*charSelection);
+//                    hLine(xPos+3,(yPos - gui->ftextHeight)+2, xPos+3, yPos+2);
+//                }
+//            }
+//            else {
+//                hLine(0, 2, 0, y+gui->ftextHeight+2);
+//            }
+//        }
+//
+//        hFbo.end();
+//        bPixelsDirty = false;
+//    }
+//
+//    ofSetColor(255, 255, 255, 255);
+//    hFbo.draw(x, y, w, h);
+}
 
+//--------------------------------------------------------------
 void hTextArea::draw()
 {
 	hGui * gui = hGui::getInstance();
@@ -279,58 +383,107 @@ void hTextArea::keyPressed(int key)
     string s = data->label;
     int strOffset = (lines[lineSelection].start + charSelection);
 
-    if((key == 10) ||  (key == 13)){ // RETURN
-        // OLD: s += '\n';
-        s.insert(strOffset,1,'\n');
-		data->label = s;
-        updateLines();
-        updateSelection(true);
-    }
-    else if((key == 8) || (key == 127)) { // BACKSPACE
-        if(s.size() > 0) {
-            if(strOffset > 0) {
+//    if (ofGetModifierKeyAlt() || ofGetModifierKeyControl()) {
+//        if (key == 3) { // 'c' + CTRL key
+//            copyClipBoardText(s);
+//        }
+//        if (key == 22) { // 'v' + CTRL key
+//            string clipBoardText = pasteClipBoardText();
+//            s.insert(strOffset,clipBoardText);
+//            charSelection += clipBoardText.size() - 1;
+//            data->label = s;
+//            updateLines();
+//            updateSelection(true);
+//        }
+//        bPixelsDirty = true;
+//        return;
+//    }
 
-            if(charSelection == 0) {
-                // correct the selection when removing <return> on the start of a line
-                // -------------------------------------------------------------------
-                // cout << "lineSelection = " << lineSelection << " ";
-                // cout << "lineNum = " << lineNum << endl;
-                if(lineSelection < lineNum) { // not needed on last line
-                    // int numChars = lines[lineSelection].end - lines[lineSelection].start;
-                    // cout << "numChars = " << numChars << endl;
+    switch (key) {
+        case 30:
+        case 13:
+            s.insert(strOffset,1,'\n');
+            data->label = s;
+            updateLines();
+            updateSelection(true);
+            break;
+        case 8:
+        case 127:
+            if(s.size() > 0) {
+                if(strOffset > 0) {
 
-                    // correction is only necessary if last character of previous line is <return>
-                    int lastCharOffset = lines[lineSelection-1].end;
-                    int lastCharOfPrevLine = data->label[lastCharOffset];
-                    // cout << "last character of previous line = " << lastCharOfPrevLine << endl;
+                    if(charSelection == 0) {
+                        // correct the selection when removing <return> on the start of a line
+                        // -------------------------------------------------------------------
+                        // cout << "lineSelection = " << lineSelection << " ";
+                        // cout << "lineNum = " << lineNum << endl;
+                        if(lineSelection < lineNum) { // not needed on last line
+                            // int numChars = lines[lineSelection].end - lines[lineSelection].start;
+                            // cout << "numChars = " << numChars << endl;
 
-                    // Here is the correction :
-                    if((lastCharOfPrevLine == 10) || (lastCharOfPrevLine == 13)) { // RETURN/ENTER
-                        int numCharsInPrevLine = lines[lineSelection-1].end - lines[lineSelection-1].start;
+                            // correction is only necessary if last character of previous line is <return>
+                            int lastCharOffset = lines[lineSelection-1].end;
+                            int lastCharOfPrevLine = data->label[lastCharOffset];
+                            // cout << "last character of previous line = " << lastCharOfPrevLine << endl;
 
-                         --lineSelection;
-                         charSelection = numCharsInPrevLine + 1;
-                    }
-               } // <- if(lineSelection < lineNum)
-            } // <- if(charSelection == 0)
+                            // Here is the correction :
+                            if((lastCharOfPrevLine == 10) || (lastCharOfPrevLine == 13)) { // RETURN/ENTER
+                                int numCharsInPrevLine = lines[lineSelection-1].end - lines[lineSelection-1].start;
 
-                // cout << "strOffset: " << strOffset << endl;
-                // OLD: setText(s.substr(0, s.length() - 1));
-                s.erase(strOffset-1, 1);
-				data->label = s;
+                                --lineSelection;
+                                charSelection = numCharsInPrevLine + 1;
+                            }
+                        } // <- if(lineSelection < lineNum)
+                    } // <- if(charSelection == 0)
+
+                    // cout << "strOffset: " << strOffset << endl;
+                    // OLD: setText(s.substr(0, s.length() - 1));
+                    s.erase(strOffset-1, 1);
+                    data->label = s;
+                    updateLines();
+                    updateSelection(false);
+                } // <- if(strOffset > 0)
+            } // <- if(s.size() > 0)
+            break;
+        case 356: // left
+            //charSelection--;
+            data->label = s;
+            updateLines();
+            updateSelection(false);
+            break;
+        case 358: // right
+            //charSelection++;
+            data->label = s;
+            updateLines();
+            updateSelection(true);
+            break;
+        case 357: // up?
+            lineSelection--;
+            charSelection++;
+            data->label = s;
+            updateLines();
+            updateSelection(false);
+            break;
+        case 359: // down?
+            lineSelection++;
+            charSelection++;
+            data->label = s;
+            updateLines();
+            updateSelection(false);
+            break;
+        default:
+            if( (key >= 32) && (key <= 255) ) { // NORMAL KEY
+                // OLD: s += (char)key;
+                s.insert(strOffset,1,key);
+                data->label = s;
                 updateLines();
-                updateSelection(false);
-            } // <- if(strOffset > 0)
-        } // <- if(s.size() > 0)
-    } // <- if((key == 8) || (key == 127))
+                updateSelection(true);
+            }
+            break;
 
-    else if( (key >= 32) && (key <= 255) ) { // NORMAL KEY
-        // OLD: s += (char)key;
-        s.insert(strOffset,1,key);
-		data->label = s;
-        updateLines();
-        updateSelection(true);
     }
+
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -356,7 +509,6 @@ void hTextArea::mousePressed(int xx, int yy, int btn)
 #if defined( __WIN32__ ) || defined( _WIN32 )
     lineShift-=1;
 #endif
-
     lineSelection = (((yy - y) - lineShift) / gui->ftextHeight) + startLine;
 
     if(lineSelection <= lineNum) {
@@ -399,6 +551,7 @@ void hTextArea::mousePressed(int xx, int yy, int btn)
            }
         }
     }
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------
@@ -415,27 +568,26 @@ void hTextArea::addScrollBar(void)
         hGui * gui = hGui::getInstance();
 
         // Add the scrollBar widget:
-	    scrollBar = new hTScrollBar("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, (y+gui->scrollButtonHeight)-1,
+	    scrollBar = new hTScrollBar("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, (y+gui->scrollButtonHeight)-1,
 									gui->scrollBarSize, (h - (gui->scrollButtonHeight*2)+1+1) );
 	    scrollBar->setLinkedTextArea(this);
 
         // Add the dec button widget (up):
-        decButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, y, 0, "");
+        decButton = new hScrollButton("", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, y, 0, "");
         decButton->setDirection(false);
 	    decButton->setLinkedTextArea(this);
 
         // Add the inc button widget (down):
         incButton = new hScrollButton(
-									  "", parentPanel, HGUI_ABSOLUTE_POSITION, x+w-1, ((y + h+1) - gui->scrollButtonHeight)-1, 0, "");
+									  "", parentPanel, HGUI_ABSOLUTE_POSITION, x+w, ((y + h+1) - gui->scrollButtonHeight)-1, 0, "");
         incButton->setDirection(true);
 	    incButton->setLinkedTextArea(this);
 
-/* NO MORE NECESSARY!
 #if defined( __WIN32__ ) || defined( _WIN32 )
         incButton->move(0, 1);
 #endif
-*/
     }
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -481,6 +633,7 @@ void hTextArea::updateLines(void)
             ++numChars;
         }
     }
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------
@@ -535,6 +688,7 @@ void hTextArea::updateSelection(bool insertFlag)
 
     if(scrollBar != NULL)
         scrollBar->setPosition(startLine);
+    bPixelsDirty = true;
 }
 
 void hTextArea::jumpToEnd()
@@ -544,6 +698,7 @@ void hTextArea::jumpToEnd()
 
     if(scrollBar != NULL)
         scrollBar->setPosition(startLine);
+    bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------

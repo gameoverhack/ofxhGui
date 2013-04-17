@@ -85,6 +85,8 @@ void hTextAreaButton::bang(void)
            break;
         }
     }
+    bPixelsDirty = true;
+    if(linkedTextArea != NULL) linkedTextArea->bPixelsDirty = true;
 }
 
 //--------------------------------------------------------------

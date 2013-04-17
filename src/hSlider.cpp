@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #include "hSlider.h"
@@ -87,7 +87,7 @@ void hSlider::setValue(double val)
     }
 
 	syncVar(); // synchronize the eventual used variable with the state of the widget
-	
+
     setLinkedValues();
 }
 
@@ -136,32 +136,45 @@ void hSlider::bang(void)
 
 //--------------------------------------------------------------
 
+void hSlider::setDisabled(bool disableFlag)
+{
+	data->disabled = disableFlag;
+}
+
+//--------------------------------------------------------------
+
 void hSlider::draw(void)
 {
     hGui * gui = hGui::getInstance();
-	
+
 	if(varType != HGUI_NO_VAR) {
 		syncWithVar();
-		
+
         if(data->value < min) data->value = min;
         else if(data->value > max) data->value = max;
-		
+
 		double pRange = w - 2;
         double vRange = max - min;
         position = ((data->value - min) * pRange) / vRange;
 	}
-	
+
     hWidget::draw();
-	
-	if(data->selectColor != -1)
-		hSetHexColor(data->selectColor);
-	else hSetHexColor(gui->sliderColor);
-	
+
+	if(data->selectColor != -1) {
+        if(data->disabled == false)
+				hSetHexColor(data->selectColor);
+            else hSetHexColor(gui->disableColor);
+	} else {
+        if(data->disabled == false)
+				hSetHexColor(gui->sliderColor);
+            else hSetHexColor(gui->disableColor);
+	}
+
 	hPaintRect(x+1, y+1, position, h-2);
-	
+
 	hSetHexColor(hGui::getInstance()->borderColor);
-	hLine (x+position+1, y+1, x+position+1, y+h);
-	
+	hLine (x+position+1, y+1, x+position+1, y+h-1);
+
     if(owningLabel == true) {
         if(linkedLabel != NULL)
             linkedLabel->draw();
@@ -170,11 +183,13 @@ void hSlider::draw(void)
 
 void hSlider::mousePressed(int xx, int yy, int btn)
 {
+    if(data->disabled == true) return;
 	mouseDragged(xx, yy, btn); // same routine...
 }
 
 void hSlider::mouseDragged(int xx, int yy, int btn)
 {
+    if(data->disabled == true) return;
 	position = xx - x;
 
 	if(position < 0) position = 0;
@@ -213,16 +228,16 @@ void hSlider::saveSettings(ofxXmlSettings * xml)
 	if(data->name.size() > 0) {
 		int tag = xml->addTag(data->type);
 		xml->pushTag(data->type, tag);
-		
+
 		xml->addValue("name", data->name);
-		
+
 		double dValue = data->value;
 		int nValue = (int) data->value; // truncated value
-		
+
 		if(dValue == (double)nValue) // same ? don't show decimal digits
 			xml->addValue("value", nValue);
 		else xml->addValue("value", dValue);
-		
+
 		xml->popTag();
 	}
 }

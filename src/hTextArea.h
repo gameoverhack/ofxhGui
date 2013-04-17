@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,15 +22,16 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #ifndef _HTEXTAREA
 #define _HTEXTAREA
-
+#include "ofUtils.h"
+#include "hStringUtils.h"
 #include "hWidget.h"
 #include <vector>
-
+using namespace std;
 //--------------------------------------------------------
 
 struct hLineInfo {
@@ -50,20 +51,20 @@ class hTextArea: public hWidget{
 public:
     hTextArea(std::string name, hPanel * parent, int dispMode, int xx, int yy, int width, int height);
 // Unlike hTextBox, hTextArea widgets cannot use default text in the constructor
-	
+
     void addTools(int width, int position, std::string sendStr, std::string clearStr);
 	// void addTools(int width, int position, std::string sendStr, std::string clearStr);
 	// Add a 'send' and a 'clear' button to a textedit object
 	// "width" is the width of each button
 	// position: 0 = center, -1 = left, 1 = right
-	
+
 	// When the send button is pushed, the message is sent (with the text as parameter)
 	// When the clear button is pushed, the text is cleared
 	// An additional message2 can be set to perform another action when the text is cleared
-	
+
 	void setText(std::string s);
 	// Store the text of the string s  and adapt the selections and scrollbars
-	
+
 	void setText(std::string s, bool endFlag);
 	// Store the text of the string s  and adapt the selections and scrollbars
 	// if endFlag == true, jump to then end of the text
@@ -81,14 +82,14 @@ public:
 	void clearText(bool endFlag = true);
 	// Clear the text and adapt the selections and scrollbars
 	// parameter ignored here
-	
+
 	std::string getText(void);
 	// enable/disable the editability of the widget
 	// A text area is editable by default
 
     void setEditable(bool flag);
 	// The textbox is editable if the flag is true (true by default)
-	
+
 	void setMessage(std::string s);
 	// Set the message that will be send when the widget state change
 
@@ -99,18 +100,20 @@ public:
 	void bang(void);
 
 	//--------------------------------------------------------
-	
+
 	// Methods called by event listeners:
-	
+
     void draw();
+    void update();
+
     void keyPressed(int key);
     void mousePressed(int xx, int yy, int btn);
 
 	//--------------------------------------------------------
-	
+
 	// Helper methods:
 	// Should not be called directly
-	
+
 	void addScrollBar(void);
 	// Add a scrollbar to a textedit object (automatically done)
 
@@ -122,11 +125,11 @@ public:
 	// insertFlag: true after insert, false after erase
 	// Could eventually be used just to move the cursor <- or ->
 	// but there are some bugs when used by scrolling.
-	
+
     void jumpToEnd();
 	// Jump to the end of the text
 	// Usefull when data is automatically add to the textArea
-	
+
 	//--------------------------------------------------------
 
 protected:

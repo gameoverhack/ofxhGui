@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #ifndef _HWIDGET
@@ -30,6 +30,8 @@
 
 #include "hDrawingPrimitives.h"
 #include "hObject.h"
+#include "ofGraphics.h"
+#include "ofFbo.h"
 
 #include <string>
 
@@ -43,16 +45,16 @@ struct hGuiData {
 	std::string name;
     int index;	// index as needed for display or sending parameter
 	int offset; // offset in the parent panel
-	
+
 	std::string label;
 	double value, value2;
 	bool selectable;
 	bool selected;
     bool radioEnabled;
     bool disabled;
-	
+
     int selectColor;
-	
+
     int indexDisplayFlag;
     int indexShift1, indexShift10, indexShift100;
     std::string message, message2;
@@ -70,7 +72,7 @@ const int HGUI_NEXT_ROW = 4; // to next row
 const int HGUI_NEXT_COL = 5; // to next colomn
 
 // WARNING:
-// After a composite object (hListBox, hButtonBox ...) 
+// After a composite object (hListBox, hButtonBox ...)
 // the dispModes HGUI_RIGHT and HGUI_BOTTOM cannot be used.
 // Use HGUI_NEXT_ROW or HGUI_NEXT_COL instead
 
@@ -91,7 +93,7 @@ class ofxXmlSettings;
 
 class hWidget : public hObject {
 public:
-	
+
     hWidget(std::string name, hPanel * parent, int dispMode, int xx, int yy, int width, int height);
 	// Constructor: called when a special kind of widget is created
 	// Should not be called directly.
@@ -122,30 +124,30 @@ public:
 	hPanel * getParentPanel(void);
 	// Return the parent panel of the widget
 	// Return NULL if the widget has no parent panel
-	
+
 	void setSelectable(bool selFlag);
 	// Allow the widget to be selected or not
-	
+
 	void select(void);
 	void unselect(void);
 	void setSelected(bool selFlag);
 	// Select/unselect the widget
-	
+
 	bool isSelected(void);
 	// Check if the widget is selected
-	
+
     void toggleSelection(void);
 	// Select if not selected, unselect if selected
-	
+
 	virtual void setRadioEnabled(bool radioFlag);
 	// Transform the widget into a radio button
-	
+
     void setVisibleBorder(bool visibleFlag);
 	// Make the background visible (on by default)
 
     void setVisibleBackground(bool visibleFlag);
 	// Make the background visible (off by default)
-	
+
 	virtual void setBackgroundColor(int color);
 	// If color != -1, overwite the default background color
 	// Warning : for listBox objects it is necessary to do this before adding items and data
@@ -159,7 +161,7 @@ public:
 
     bool isEditable(void);
 	// Check if the widget is editable
-	
+
 	//--------------------------------------------------------
 
 	// Methods used to synchronize the widget with a variable:
@@ -176,37 +178,38 @@ public:
 	void setBoolVar(bool *var);
 	// Ask the widget to synchronize with a bool variable
 	// Used by checkBoxes
-	
+
 	void unsetVar(void);
 	// Remove the synchronization between widget and variable
 
 	//--------------------------------------------------------
-	
+
 	// Methods called by event listeners:
-	
+
     virtual void draw(void);
-	
+	virtual void update(void){};
+
     virtual void mousePressed(int xx, int yy, int btn){}
     virtual void mouseReleased(int xx, int yy, int btn){}
     virtual void mouseDragged(int xx, int yy, int btn){}
 
 	//--------------------------------------------------------
-	
+
 	// Helper methods:
 	// Should not be called directly
-	
+
 	void calcWidgetPosition(void);
 	// Remember the position after the last widget of the parent panel
 	// note: this cannot be done in addWidgetToPanel, because the size of a widget
 	// can be changed after that
 	// For composite objects: must be done each time new itms are add
-	
+
 	void setMaxXY(int xx, int yy);
 	// Set the new values of maxX and maxY
 
 	void addMaxXY(int xx, int yy);
 	// Increments maxX and maxY by a value
-	
+
 	void syncVar(void);
 	// Synchronize the used variable with the state of the widget
 
@@ -221,11 +224,17 @@ public:
 
 	virtual void saveSettings(ofxXmlSettings * xml){}
 	// Save the state of the widgets that implement this method to the open xml file
-	
+
+    void resize();
+
+    bool bPixelsDirty;
 	//--------------------------------------------------------
 
 protected:
-friend class hPanel;
+    friend class hPanel;
+
+    ofFbo hFbo;
+    bool bUseFBO;
 
 	int displayMode;
     int x, y, w, h;
@@ -236,7 +245,7 @@ friend class hPanel;
     bool editable;
     bool focusSendFlag;
     int x_extension;
-	
+
 	int		varType;
 	int    *intVar;
 	float  *floatVar;

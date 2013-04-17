@@ -38,9 +38,6 @@ class hDialog: public hPanel{
 public:
     hDialog(std::string name, hPanel * parent, int dispMode, int xx, int yy, int width, int height);
 
-	void setTitle(std::string s);
-	// Set the text to be displayed on the top of the dialog
-	
     void addCloseButton(void);
 	// Add a 'close' button on the top right of the dialog
 	
