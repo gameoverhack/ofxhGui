@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #include "ofConstants.h"
@@ -57,7 +57,7 @@ void hLine(float x1, float y1, float x2, float y2)
 
 void hSetHexColor(int hexColor)
 {
-#if OF_VERSION < 7
+#if OF_VERSION_MINOR < 7
 	// cout << "using OF version 6" << endl;
 	ofSetColor(hexColor);
 #else
@@ -68,7 +68,7 @@ void hSetHexColor(int hexColor)
 
 //--------------------------------------------------------------
 
-#if OF_VERSION < 7 // we need the getSize() method that exists only in OF 7
+#if OF_VERSION_MINOR < 7 // we need the getSize() method that exists only in OF 7
 	class extendedOfTrueTypeFont : public ofTrueTypeFont { public: int getSize(void){return fontSize;} };
 #endif
 
@@ -76,7 +76,7 @@ void hDrawString(ofTrueTypeFont *fnt, std::string s, float x, float y)
 {
 	int yShift;
 
-#if OF_VERSION < 7
+#if OF_VERSION_MINOR < 7
 	int size = ((extendedOfTrueTypeFont *)fnt)->getSize();
 #else
 	int size = fnt->getSize();
@@ -88,7 +88,7 @@ void hDrawString(ofTrueTypeFont *fnt, std::string s, float x, float y)
 		default: yShift = size - 8;
 	}
 
-#if OF_VERSION < 7
+#if OF_VERSION_MINOR < 7
 	fnt->drawString(s, x-2, (y-2) - yShift);
 #else
 	fnt->drawString(s, x, y - yShift);
