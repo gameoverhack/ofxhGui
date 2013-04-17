@@ -143,7 +143,7 @@ void testApp::setup()
 // Let our gui engine know what is our root widget (can also be done or changed later)
 // All events will first process the root widget
 // Note: A program can eventually set another root widget during its execution
-
+    
 	gui->setRootWidget(mainPanel);
 	// void setmainPanel(hWidget * root);
 

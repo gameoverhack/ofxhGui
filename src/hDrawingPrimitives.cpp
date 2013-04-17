@@ -58,7 +58,7 @@ void hSetHexColor(int hexColor)
 {
 #if OF_VERSION < 7
 	// cout << "using OF version 6" << endl;
-	ofSetColor(hexColor);
+	ofSetHexColor(hexColor);
 #else
 	// cout << "using OF version 7" << endl;
 	ofSetHexColor(hexColor);

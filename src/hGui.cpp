@@ -162,22 +162,22 @@ hTextBox * hGui::addTextBox(std::string name, hPanel * parent, int dispMode, int
 
 void hGui::addListeners(void)
 {
-	ofAddListener(ofEvents.draw, this, &hGui::draw);
-	ofAddListener(ofEvents.keyPressed, this, &hGui::keyPressed);
+	ofAddListener(ofEvents().draw, this, &hGui::draw);
+	ofAddListener(ofEvents().keyPressed, this, &hGui::keyPressed);
 
-	ofAddListener(ofEvents.mousePressed, this, &hGui::mousePressed);
-	ofAddListener(ofEvents.mouseDragged, this, &hGui::mouseDragged);
-	ofAddListener(ofEvents.mouseReleased, this, &hGui::mouseReleased);
+	ofAddListener(ofEvents().mousePressed, this, &hGui::mousePressed);
+	ofAddListener(ofEvents().mouseDragged, this, &hGui::mouseDragged);
+	ofAddListener(ofEvents().mouseReleased, this, &hGui::mouseReleased);
 }
 
 void hGui::removeListeners(void)
 {
-	ofRemoveListener(ofEvents.draw, this, &hGui::draw);
-	ofRemoveListener(ofEvents.keyPressed, this, &hGui::keyPressed);
+	ofRemoveListener(ofEvents().draw, this, &hGui::draw);
+	ofRemoveListener(ofEvents().keyPressed, this, &hGui::keyPressed);
 
-	ofRemoveListener(ofEvents.mousePressed, this, &hGui::mousePressed);
-	ofRemoveListener(ofEvents.mouseDragged, this, &hGui::mouseDragged);
-	ofRemoveListener(ofEvents.mouseReleased, this, &hGui::mouseReleased);
+	ofRemoveListener(ofEvents().mousePressed, this, &hGui::mousePressed);
+	ofRemoveListener(ofEvents().mouseDragged, this, &hGui::mouseDragged);
+	ofRemoveListener(ofEvents().mouseReleased, this, &hGui::mouseReleased);
 }
 
 // ---------------------------------------------------------------
