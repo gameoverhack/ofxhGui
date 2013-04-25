@@ -149,6 +149,7 @@ void hSlider::draw(void)
 
 	if(varType != HGUI_NO_VAR) {
 		syncWithVar();
+        setLinkedValues();
 
         if(data->value < min) data->value = min;
         else if(data->value > max) data->value = max;
@@ -216,7 +217,7 @@ void hSlider::mouseDragged(int xx, int yy, int btn)
     }
 
 	data->value = val;
-    setLinkedValues();
+    //setLinkedValues();
 
 	bang();
 }
