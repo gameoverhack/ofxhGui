@@ -468,6 +468,8 @@ void hListBox::scrollItems(int startItem)
     int numData  = data_buffer.size();
     if(numItems == numData) return; // nothing to do (there are at least the same number of data  that items)
 
+    //cout << "s " << startLine << " " << startItem << " " << numData << " " << numItems << endl;
+
     if((startItem >= 0) && (startItem <= (numData - numItems))) {
         // Move the data pointers to show the new data to the widgets:
         for(int i = 0; i < numItems; ++i) {
