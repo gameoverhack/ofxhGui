@@ -1,20 +1,20 @@
 
 /*****************************************************************************
- 
+
  Copyright (C) 2011 by Bernard Geyer
- 
+
  http://bernardgeyer.com/
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
- 
+
  *****************************************************************************/
 
 #include "hScrollButton.h"
@@ -127,23 +127,33 @@ void hScrollButton::mousePressed(int xx, int yy, int btn)
         int numItems  = linkedListBox->getNumWidgets();
         int numData   = linkedListBox->getNumData();
         int startItem = linkedListBox->getScrollPosition();
-
+//        cout << linkedListBox->getScrollPosition() << endl;
 	    if(direction == false ) {
-	        if(startItem > 0) {
-	            --startItem;
-                linkedListBox->scrollItems(startItem);
+	        if(startItem >= 0) {
+//	            --startItem;
+//                linkedListBox->scrollItems(startItem);
                 linkedListBox->scrollBar->setPosition(startItem);
+                if(startItem == linkedListBox->getScrollPosition()){
+                    //startItem--;
+                    linkedListBox->scrollBar->setPosition(startItem);
+                }
+
 	        }
-	        // cout << "linkedListBox up" << endl;
-	    }
-	    else {
-	        if(startItem < (numData - numItems)) {
-	            ++startItem;
+//	         cout << "linkedListBox up" << endl;
+	    } else {
+	        if(startItem <= (numData - numItems)) {
+                for(int i = 0; i < 3; i++){
+                    startItem++;
+                    linkedListBox->scrollBar->setPosition(startItem);
+                    if(startItem != linkedListBox->getScrollPosition()) break;
+                }
+//	            startItem = startItem + 3;
                 linkedListBox->scrollItems(startItem);
-                linkedListBox->scrollBar->setPosition(startItem);
+
 	        }
-	        // cout << "linkedListBox down" << endl;
+//	         cout << "linkedListBox down" << endl;
 	    }
+//	    cout << linkedListBox->getScrollPosition() << endl;
         linkedListBox->bPixelsDirty = true;
 	}
 

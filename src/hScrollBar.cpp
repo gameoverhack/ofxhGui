@@ -65,15 +65,13 @@ void hScrollBar::setPosition(int start_item)
 
     int hh  = gui->scrollHandleHeight;
     int hh2 = (hh/2) + 2;
+    int maxWidth = (h+1) - hh;
 
     if(startItem < 1) {
         position = hh2;
-    }
-    else {
+    } else {
         int numItems  = linkedListBox->getNumWidgets();
         int numData   = linkedListBox->getNumData();
-
-        int maxWidth = (h+1) - hh;
 
         position = (startItem * maxWidth) / (numData - numItems);
         //cout << position << " " << maxWidth << " " << start_item << " " << hh2 << endl;
@@ -84,7 +82,6 @@ void hScrollBar::setPosition(int start_item)
         if(position > hh2) // new (necessary when many lines)
              startItem = (position * (numData - numItems)) / maxWidth;
         else startItem = 0; // new
-
 
     }
     if(linkedListBox != NULL) {
